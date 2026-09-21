@@ -10,6 +10,10 @@ a missing key makes `init` a no-op, `withSpan` still runs the function, and
 `claim` does nothing. Check that `MATRIX_API_KEY` is set in the process that
 actually runs the agent.
 
+If there is no key at all, stop and ask the user to sign up at
+https://matrixverify.dev and put it in `.env`. Do not substitute a placeholder
+to get past this — a placeholder produces exactly these symptoms, permanently.
+
 ## `init` logs, but no `exporting`
 
 Nothing was recorded. With LangChain, `callbacks` was not passed to the run

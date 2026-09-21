@@ -25,15 +25,56 @@ a framework, and do not wrap tools by hand when the framework has callbacks.
 
 Work in this order:
 
-1. Detect the language, framework, agent entry point, tool call sites, and
+1. Confirm `MATRIX_API_KEY` exists. If it does not, stop and ask — see
+   [Before writing any code](#before-writing-any-code-the-key).
+2. Detect the language, framework, agent entry point, tool call sites, and
    whether any Matrix wiring already exists.
-2. Choose the integration path from the table below.
-3. Make the edits.
-4. Verify with `MATRIX_DEBUG=1` and a real run. An integration is not done
+3. Choose the integration path from the table below.
+4. Make the edits.
+5. Verify with `MATRIX_DEBUG=1` and a real run. An integration is not done
    until a trace has been accepted by the server.
 
 Node.js 18+. TypeScript and JavaScript only today — if the agent is Python,
 say so plainly and stop rather than improvising.
+
+## Before writing any code: the key
+
+Check for `MATRIX_API_KEY` first — in the environment, in `.env`, in
+`.env.local`, in the deployment's variables. It is the one thing that cannot be
+derived from the codebase.
+
+**If it is not there, stop and ask the user for it.** Say exactly this much:
+
+> Matrix needs an API key. Sign up at https://matrixverify.dev — the key is
+> shown once, at signup — then add it to `.env`:
+>
+> ```
+> MATRIX_API_KEY=sk_...
+> ```
+>
+> Tell me when it is there and I will continue.
+
+Do not continue past this point without it. Specifically, never:
+
+- invent a placeholder such as `sk_your_key_here`, `sk_xxx`, or `<your-key>` —
+  it looks configured, `init` silently does nothing, and the user discovers
+  weeks later that nothing was ever verified;
+- hardcode a key you found anywhere, or copy one out of another project;
+- write the key into source, a committed file, or a `NEXT_PUBLIC_*` variable;
+- wire the integration anyway and "leave the key for later" — the run that
+  proves it works cannot happen, so the work cannot be checked.
+
+This is not caution for its own sake. The SDK is fail-silent by design: with no
+key, `init` is a no-op, `withSpan` still runs the wrapped function, `claim`
+does nothing, and the agent behaves exactly as before. Nothing errors. An
+integration finished without a key is indistinguishable from one that works
+until someone looks at an empty findings page.
+
+The same applies to the acting identity for email claims. If you cannot tell
+which account the agent sends as — from the mail tool's own credentials, an
+existing `from` address, or a variable already in the project — ask the user
+rather than guessing. A guessed address produces
+`inconclusive / account_mismatch` on every claim.
 
 ## The contract
 
@@ -100,6 +141,7 @@ genuinely ambiguous. Prefer reading the tool's own credentials over asking.
 ## Implementation rules
 
 - Call `verify.init` once, at startup, on the server side.
+- Never invent, guess, or hardcode `MATRIX_API_KEY`. No placeholders.
 - `MATRIX_API_KEY` is a server secret. Never put it in `NEXT_PUBLIC_*`, client
   bundles, or committed files. Add it to `.env` and confirm `.env` is ignored.
 - Leave `endpoint` unset. It defaults to `https://matrixverify.dev/api/traces`
@@ -120,6 +162,8 @@ genuinely ambiguous. Prefer reading the tool's own credentials over asking.
 ## Verification
 
 An integration is done when a trace has arrived, not when the code compiles.
+If no key is configured, this step cannot run — and the integration is not
+done. Stop and ask for the key rather than reporting success.
 
 1. Run the agent once with `MATRIX_DEBUG=1`.
 2. Expect these lines, in this order:
