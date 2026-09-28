@@ -32,7 +32,7 @@ The spans were built and the POST failed.
 
 ## `export OK`, but no finding appears
 
-Verification runs on a schedule, roughly every ten minutes. Wait a full cycle
+Verification runs on a schedule, roughly every half hour. Wait a full cycle
 before investigating. If the trace is there and the finding is not, the claim
 was not extracted: the agent's final message did not state what it did. "All
 done!" gives the verifier nothing; "Emailed the invoice to dana@example.com"

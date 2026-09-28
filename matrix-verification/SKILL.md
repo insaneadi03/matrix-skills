@@ -177,7 +177,7 @@ done. Stop and ask for the key rather than reporting success.
 3. Confirm the span list contains the instruction, the tool call, and the
    claim — not just the tool call.
 4. The finding appears at [matrixverify.dev](https://matrixverify.dev) within
-   about ten minutes. Verification runs on a schedule; nothing to trigger.
+   about half an hour. Verification runs on a schedule; nothing to trigger.
 
 If `export OK` never appears, read
 [references/troubleshooting.md](references/troubleshooting.md) before changing
