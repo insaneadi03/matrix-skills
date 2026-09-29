@@ -5,8 +5,12 @@ Installable skills that teach a coding agent to wire
 
 ## matrix-verification
 
-Adds the four calls `@matrixverify/verify` needs, in the right places, with the
-two that fail silently if you forget them: `fromResolver` and `shutdown()`.
+Adds the four calls the SDK needs, in the right places, with the two that fail
+silently if you forget them: the acting identity and the flush.
+
+Works in **TypeScript** (`@matrixverify/verify`) and **Python**
+(`matrix-verify`). The skill detects which language runs your agent and follows
+that path; in a repository with both, it asks rather than guessing.
 
 Install it into Cursor, Claude Code, or anything else that reads `SKILL.md`:
 
@@ -32,8 +36,9 @@ arguments, and what it claimed afterwards — then checks the claim against the
 real system and returns **confirmed**, **contradicted**, or **inconclusive**,
 with the evidence attached.
 
-Email claims are checked against Gmail today. A claim of a send with no send
-tool call anywhere in the trace is contradicted from the trace alone.
+Email claims are checked against Gmail today, using the mailbox you connect
+under Settings. A claim of a send with no send tool call anywhere in the trace
+is contradicted from the trace alone.
 
 ## Licence
 
